@@ -237,7 +237,7 @@ public class Main extends javax.swing.JFrame {
         StringSelection pass = new StringSelection(jTextField1.getText());
         copied.setContents(pass, pass);
         
-        JOptionPane.showMessageDialog(this, "Se ha copiado: " + pass , "Copiado", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(this, "Se ha copiado: " + jTextField1.getText() , "Copiado", JOptionPane.INFORMATION_MESSAGE);
         
     }//GEN-LAST:event_jButton2ActionPerformed
 

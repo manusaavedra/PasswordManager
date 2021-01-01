@@ -2,7 +2,7 @@
 
 Aplicación creada en java para generar contraseñas de una manera fácil.
 
-## Generar password de tipo
+#### Generar password de tipo
 
 - letras.
 - Números.

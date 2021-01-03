@@ -8,7 +8,9 @@ package passwordmanager;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
+import java.io.File;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 import javax.swing.JOptionPane;
@@ -24,6 +26,8 @@ import javax.swing.table.TableModel;
  */
 public class Main extends javax.swing.JFrame {
     
+    private final String filename = System.getProperty("user.dir")+ "store.pwd";
+    
     enum TypePassword {
         ABC,
         NUM,
@@ -31,6 +35,7 @@ public class Main extends javax.swing.JFrame {
     }
     
     CustomTableModel model = new CustomTableModel();
+    AuthStorage store = new AuthStorage();
     
     /**
      * Creates new form Main
@@ -40,7 +45,9 @@ public class Main extends javax.swing.JFrame {
         
         this.jCheckBox2.setSelected(true);
         this.jRadioButton2.setSelected(true);
-        jTable1.setModel(model);
+        this.jTable1.setModel(model);
+        
+        this.getStorege();
         
     }
     
@@ -51,12 +58,51 @@ public class Main extends javax.swing.JFrame {
         this.jDialog1.setVisible(true);
     }
     
+    private void getStorege() {
+        
+        if (!new File(filename).exists())
+            return;
+        
+        this.store.setData((ArrayList<Auth>) SerializeManager.read());
+        
+        this.jTable1.removeAll();
+        this.model = (CustomTableModel) this.jTable1.getModel();
+        
+        TableColumn passCell = jTable1.getColumnModel().getColumn(1);
+        passCell.setCellRenderer(new CustomPasswordField());
+        
+        
+        for (int i = this.store.size() - 1; i >= 0; i--) {
+            ArrayList<Auth> auth = this.store.getData();
+            model.addRow(new Object[] {
+                auth.get(i).getWebSite(),
+                auth.get(i).getPassword(),
+                auth.get(i).getAtCreated(),
+                auth.get(i).getAtModified()
+            });
+        }
+        
+        this.jTable1.setModel(model);
+        this.jTable1.updateUI();
+    }
+    
+    
     private void saveAs() {
         
-        String alias = jTextField2.getText();
-        String password = jTextField1.getText();
+        String alias = this.jTextField2.getText();
+        String password = this.jTextField1.getText();
         String atCreated = new SimpleDateFormat("EE dd MMMM yyyy HH:mm:ss", Locale.forLanguageTag("es")).format(new Date());
         
+        Auth auth = new Auth();
+        auth.setWebSite(alias);
+        auth.setPassword(password);
+        auth.setAtCreated(atCreated);
+        auth.setAtModified(atCreated);
+        
+        this.store.add(auth);
+        
+        SerializeManager.write(this.store.getData());
+    
         this.model = (CustomTableModel) jTable1.getModel();
         
         TableColumn passCell = jTable1.getColumnModel().getColumn(1);

@@ -1,6 +1,6 @@
 # PasswordManager
 
-<img src="https://i.ibb.co/80Rf80p/image.png" width="300">
+<img src="https://i.ibb.co/VwBhQ3p/image.png" width="300">
 
 Aplicación creada en java para generar contraseñas de una manera fácil.
 

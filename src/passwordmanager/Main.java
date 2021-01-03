@@ -8,12 +8,15 @@ package passwordmanager;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
-import java.util.Random;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 import javax.swing.JOptionPane;
+import javax.swing.JPasswordField;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableModel;
 
 /**
  *
@@ -27,18 +30,53 @@ public class Main extends javax.swing.JFrame {
         RANDOM
     }
     
+    CustomTableModel model = new CustomTableModel();
+    
     /**
      * Creates new form Main
      */
     public Main() {
         initComponents();
         
-        jCheckBox2.setSelected(true);
-        jRadioButton2.setSelected(true);
+        this.jCheckBox2.setSelected(true);
+        this.jRadioButton2.setSelected(true);
+        jTable1.setModel(model);
         
     }
     
-    public void GenerateRandomPassword(int length, TypePassword type) {
+    private void openSaveAsDialog() {
+        this.jDialog1.setTitle("Guardar Contraseña");
+        this.jDialog1.setSize(510, 220);
+        this.jDialog1.setLocationRelativeTo(null);
+        this.jDialog1.setVisible(true);
+    }
+    
+    private void saveAs() {
+        
+        String alias = jTextField2.getText();
+        String password = jTextField1.getText();
+        String atCreated = new SimpleDateFormat("EE dd MMMM yyyy HH:mm:ss", Locale.forLanguageTag("es")).format(new Date());
+        
+        this.model = (CustomTableModel) jTable1.getModel();
+        
+        TableColumn passCell = jTable1.getColumnModel().getColumn(1);
+        passCell.setCellRenderer(new CustomPasswordField());
+        
+        this.model.insertRow(0 ,new Object[] {
+            alias,
+            password,
+            atCreated,
+            atCreated
+        });
+        
+        jTable1.setModel(model);
+        jTable1.updateUI();
+        
+        jDialog1.setVisible(false);
+        
+    }
+    
+    private void GenerateRandomPassword(int length, TypePassword type) {
         
         String password = "";
         String symbols = null;
@@ -47,7 +85,7 @@ public class Main extends javax.swing.JFrame {
             case ABC:
                 symbols = String.valueOf(BuildKeyStrings.GenerateAlphabetic(length));
                 
-                if (jRadioButton1.isSelected()) {
+                if (this.jRadioButton1.isSelected()) {
                     symbols = symbols.toLowerCase();
                 }
                 
@@ -60,7 +98,7 @@ public class Main extends javax.swing.JFrame {
             case RANDOM: 
                 symbols = String.valueOf(BuildKeyStrings.GenerateRandomCaracter(length));
                 
-                if (jRadioButton1.isSelected()) {
+                if (this.jRadioButton1.isSelected()) {
                     symbols = symbols.toLowerCase();
                 }
                 
@@ -69,7 +107,7 @@ public class Main extends javax.swing.JFrame {
         }
         
         password = symbols;
-        jTextField1.setText(password);
+        this.jTextField1.setText(password);
         
     }
 
@@ -84,6 +122,14 @@ public class Main extends javax.swing.JFrame {
 
         buttonGroup1 = new javax.swing.ButtonGroup();
         buttonGroup2 = new javax.swing.ButtonGroup();
+        jDialog1 = new javax.swing.JDialog();
+        jLabel3 = new javax.swing.JLabel();
+        jTextField2 = new javax.swing.JTextField();
+        jButton4 = new javax.swing.JButton();
+        jLabel4 = new javax.swing.JLabel();
+        jPopupMenu1 = new javax.swing.JPopupMenu();
+        jMenuItem1 = new javax.swing.JMenuItem();
+        jMenuItem2 = new javax.swing.JMenuItem();
         jTextField1 = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
         jCheckBox1 = new javax.swing.JCheckBox();
@@ -95,8 +141,74 @@ public class Main extends javax.swing.JFrame {
         jRadioButton1 = new javax.swing.JRadioButton();
         jRadioButton2 = new javax.swing.JRadioButton();
         jButton2 = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTable1 = new javax.swing.JTable();
+        jButton3 = new javax.swing.JButton();
+
+        jDialog1.setModalExclusionType(java.awt.Dialog.ModalExclusionType.APPLICATION_EXCLUDE);
+        jDialog1.setModalityType(java.awt.Dialog.ModalityType.APPLICATION_MODAL);
+
+        jLabel3.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        jLabel3.setText("<html>\n\t<span> Introduce el nombre del dominio o la url a la que pertenece esta url.</span>\n</html>");
+
+        jButton4.setText("Guardar");
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
+
+        jLabel4.setText("URL, SITIO WEB O APPS:");
+
+        javax.swing.GroupLayout jDialog1Layout = new javax.swing.GroupLayout(jDialog1.getContentPane());
+        jDialog1.getContentPane().setLayout(jDialog1Layout);
+        jDialog1Layout.setHorizontalGroup(
+            jDialog1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jDialog1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jDialog1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jDialog1Layout.createSequentialGroup()
+                        .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 320, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 166, Short.MAX_VALUE))
+                    .addGroup(jDialog1Layout.createSequentialGroup()
+                        .addGroup(jDialog1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jDialog1Layout.createSequentialGroup()
+                                .addComponent(jLabel4)
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addComponent(jTextField2))
+                        .addContainerGap())))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jDialog1Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jButton4)
+                .addContainerGap())
+        );
+        jDialog1Layout.setVerticalGroup(
+            jDialog1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jDialog1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jLabel4)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton4)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        jMenuItem1.setText("Propiedades");
+        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem1ActionPerformed(evt);
+            }
+        });
+        jPopupMenu1.add(jMenuItem1);
+
+        jMenuItem2.setText("Eliminar");
+        jPopupMenu1.add(jMenuItem2);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setResizable(false);
 
         jTextField1.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
 
@@ -111,7 +223,7 @@ public class Main extends javax.swing.JFrame {
         buttonGroup1.add(jCheckBox3);
         jCheckBox3.setText("Todos los carácteres");
 
-        jButton1.setText("Generate Password");
+        jButton1.setText("Generar Contraseña");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
@@ -119,7 +231,8 @@ public class Main extends javax.swing.JFrame {
         });
 
         jSlider1.setMaximum(32);
-        jSlider1.setPaintLabels(true);
+        jSlider1.setMinorTickSpacing(1);
+        jSlider1.setPaintTicks(true);
         jSlider1.setSnapToTicks(true);
         jSlider1.setValue(6);
 
@@ -136,10 +249,28 @@ public class Main extends javax.swing.JFrame {
         buttonGroup2.add(jRadioButton2);
         jRadioButton2.setText("Mayúsculas");
 
-        jButton2.setText("To Clipboard");
+        jButton2.setText("Copiar");
         jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton2ActionPerformed(evt);
+            }
+        });
+
+        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+
+            }
+        ));
+        jTable1.setComponentPopupMenu(jPopupMenu1);
+        jScrollPane1.setViewportView(jTable1);
+
+        jButton3.setText("Guardar Contraseña como...");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
             }
         });
 
@@ -150,12 +281,14 @@ public class Main extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGap(38, 38, 38)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 646, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jTextField1)
                     .addComponent(jLabel1)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 148, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 148, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jButton3))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jCheckBox1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -169,8 +302,9 @@ public class Main extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel2)
                         .addGap(18, 18, 18)
-                        .addComponent(jSlider1, javax.swing.GroupLayout.PREFERRED_SIZE, 226, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(44, Short.MAX_VALUE))
+                        .addComponent(jSlider1, javax.swing.GroupLayout.PREFERRED_SIZE, 560, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane1))
+                .addGap(34, 34, 34))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -198,11 +332,14 @@ public class Main extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(119, Short.MAX_VALUE))
+                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 272, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(152, 152, 152))
         );
 
-        setSize(new java.awt.Dimension(746, 479));
+        setSize(new java.awt.Dimension(740, 705));
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
@@ -211,19 +348,19 @@ public class Main extends javax.swing.JFrame {
         
         TypePassword type = null;
         
-        if (jCheckBox2.isSelected()) {
+        if (this.jCheckBox2.isSelected()) {
             type = TypePassword.ABC;
         }
         
-        if (jCheckBox1.isSelected()) {
+        if (this.jCheckBox1.isSelected()) {
             type = TypePassword.NUM;
         }
         
-        if (jCheckBox3.isSelected()) {
+        if (this.jCheckBox3.isSelected()) {
             type = TypePassword.RANDOM;
         }
         
-        GenerateRandomPassword(jSlider1.getValue(), type);
+        this.GenerateRandomPassword(this.jSlider1.getValue(), type);
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jRadioButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton1ActionPerformed
@@ -234,12 +371,26 @@ public class Main extends javax.swing.JFrame {
         // TODO add your handling code here:
         
         Clipboard copied = Toolkit.getDefaultToolkit().getSystemClipboard();
-        StringSelection pass = new StringSelection(jTextField1.getText());
+        StringSelection pass = new StringSelection(this.jTextField1.getText());
         copied.setContents(pass, pass);
         
-        JOptionPane.showMessageDialog(this, "Se ha copiado: " + jTextField1.getText() , "Copiado", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(this, "Se ha copiado: " + this.jTextField1.getText() , "Copiado", JOptionPane.INFORMATION_MESSAGE);
         
     }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        // TODO add your handling code here:
+        this.openSaveAsDialog();
+    }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        // TODO add your handling code here:
+        this.saveAs();
+    }//GEN-LAST:event_jButton4ActionPerformed
+
+    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jMenuItem1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -281,14 +432,25 @@ public class Main extends javax.swing.JFrame {
     private javax.swing.ButtonGroup buttonGroup2;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
+    private javax.swing.JButton jButton4;
     private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JCheckBox jCheckBox2;
     private javax.swing.JCheckBox jCheckBox3;
+    private javax.swing.JDialog jDialog1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JMenuItem jMenuItem1;
+    private javax.swing.JMenuItem jMenuItem2;
+    private javax.swing.JPopupMenu jPopupMenu1;
     private javax.swing.JRadioButton jRadioButton1;
     private javax.swing.JRadioButton jRadioButton2;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSlider jSlider1;
+    private javax.swing.JTable jTable1;
     private javax.swing.JTextField jTextField1;
+    private javax.swing.JTextField jTextField2;
     // End of variables declaration//GEN-END:variables
 }
